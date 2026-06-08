@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ID Card Maker</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      color: #1f2937;
+    }
+
+    .page {
+      width: min(1100px, 94vw);
+      margin: 30px auto;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: #ffffff;
+      border: 1px solid #d9e2ee;
+      border-radius: 8px;
+      padding: 22px;
+      box-shadow: 0 10px 28px rgba(31, 41, 55, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    .hint {
+      margin: 0 0 22px;
+      color: #667085;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 6px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .preview-wrap {
+      position: sticky;
+      top: 20px;
+    }
+
+    .id-card {
+      width: 340px;
+      height: 540px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 2px solid #1f2937;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(31, 41, 55, 0.18);
+    }
+
+    .card-header {
+      background: #1f2937;
+      color: #ffffff;
+      text-align: center;
+      padding: 18px 12px;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .card-header p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .photo-box {
+      width: 128px;
+      height: 128px;
+      margin: 24px auto 14px;
+      border: 2px solid #1f2937;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .person-name {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0 18px 4px;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .role {
+      text-align: center;
+      color: #2563eb;
+      font-weight: bold;
+      margin-bottom: 18px;
+      word-break: break-word;
+    }
+
+    .details {
+      padding: 0 26px;
+      font-size: 14px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .row strong {
+      color: #374151;
+    }
+
+    .row span {
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .card-footer {
+      margin-top: 18px;
+      padding: 12px 20px;
+      background: #f3f4f6;
+      text-align: center;
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    @media (max-width: 850px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-wrap {
+        position: static;
+      }
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      html,
+      body {
+        background: #ffffff;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body * {
+        display: none;
+      }
+
+      .page {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .preview-wrap,
+      .id-card,
+      .id-card * {
+        display: block;
+      }
+
+      .preview-wrap {
+        border: 0;
+        box-shadow: none;
+        padding: 0;
+        background: transparent;
+      }
+
+      .id-card {
+        box-shadow: none;
+        margin: 0;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .photo-box,
+      .row {
+        display: flex;
+      }
+
+      .row {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="panel form-panel">
+      <h1>ID Card Maker</h1>
+      <p class="hint">Fill the form. Your ID card will update automatically. Click save PDF when it is ready.</p>
+
+      <label for="school">School / Company Name</label>
+      <input id="school" type="text" placeholder="Example: ABC Public School" autocomplete="off">
+
+      <label for="tagline">Small Line Under Name</label>
+      <input id="tagline" type="text" placeholder="Example: Student Identity Card" autocomplete="off">
+
+      <label for="photo">Upload Photo</label>
+      <input id="photo" type="file" accept="image/*">
+
+      <div class="grid">
+        <div>
+          <label for="name">Full Name</label>
+          <input id="name" type="text" placeholder="Enter full name" autocomplete="off">
+        </div>
+        <div>
+          <label for="role">Class / Role</label>
+          <input id="role" type="text" placeholder="Example: Class 10" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="idNumber">ID Number</label>
+          <input id="idNumber" type="text" placeholder="Example: ID-001" autocomplete="off">
+        </div>
+        <div>
+          <label for="phone">Phone</label>
+          <input id="phone" type="text" placeholder="Example: 9876543210" autocomplete="off">
+        </div>
+      </div>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="Example: name@email.com" autocomplete="off">
+
+      <label for="address">Address</label>
+      <textarea id="address" placeholder="Enter address" autocomplete="off"></textarea>
+
+      <button type="button" onclick="savePDF()">Save as PDF</button>
+    </section>
+
+    <section class="panel preview-wrap">
+      <div class="id-card" id="idCard">
+        <div class="card-header">
+          <h2 id="cardSchool">Your School / Company</h2>
+          <p id="cardTagline">Identity Card</p>
+        </div>
+
+        <div class="photo-box">
+          <img id="cardPhoto" alt="User photo" style="display: none;">
+          <span id="photoText" style="display: block;">Photo</span>
+        </div>
+
+        <div class="person-name" id="cardName">Your Name</div>
+        <div class="role" id="cardRole">Class / Role</div>
+
+        <div class="details">
+          <div class="row">
+            <strong>ID No.</strong>
+            <span id="cardId">ID Number</span>
+          </div>
+          <div class="row">
+            <strong>Phone</strong>
+            <span id="cardPhone">Phone Number</span>
+          </div>
+          <div class="row">
+            <strong>Email</strong>
+            <span id="cardEmail">Email Address</span>
+          </div>
+          <div class="row">
+            <strong>Address</strong>
+            <span id="cardAddress">Address</span>
+          </div>
+        </div>
+
+        <div class="card-footer">This card is computer generated.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const fields = {
+      school: { output: "cardSchool", defaultText: "Your School / Company" },
+      tagline: { output: "cardTagline", defaultText: "Identity Card" },
+      name: { output: "cardName", defaultText: "Your Name" },
+      role: { output: "cardRole", defaultText: "Class / Role" },
+      idNumber: { output: "cardId", defaultText: "ID Number" },
+      phone: { output: "cardPhone", defaultText: "Phone Number" },
+      email: { output: "cardEmail", defaultText: "Email Address" },
+      address: { output: "cardAddress", defaultText: "Address" }
+    };
+
+    function updateCard() {
+      Object.keys(fields).forEach(function(inputId) {
+        const input = document.getElementById(inputId);
+        const output = document.getElementById(fields[inputId].output);
+        output.textContent = input.value.trim() || fields[inputId].defaultText;
+      });
+    }
+
+    Object.keys(fields).forEach(function(inputId) {
+      document.getElementById(inputId).addEventListener("input", updateCard);
+    });
+
+    document.getElementById("photo").addEventListener("change", function(event) {
+      const file = event.target.files[0];
+      const image = document.getElementById("cardPhoto");
+      const text = document.getElementById("photoText");
+
+      if (!file) {
+        image.style.display = "none";
+        text.style.display = "block";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        image.src = e.target.result;
+        image.style.display = "block";
+        text.style.display = "none";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function savePDF() {
+      window.print();
+    }
+
+    window.addEventListener("load", function() {
+      Object.keys(fields).forEach(function(inputId) {
+        document.getElementById(inputId).value = "";
+      });
+
+      const image = document.getElementById("cardPhoto");
+      const text = document.getElementById("photoText");
+      document.getElementById("photo").value = "";
+      image.removeAttribute("src");
+      image.style.display = "none";
+      text.style.display = "block";
+
+      updateCard();
+    });
+  </script>
+
+
+</body></html>
